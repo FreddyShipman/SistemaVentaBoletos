@@ -1,0 +1,12 @@
+# Archivos compilados de Maven
+target/
+*.class
+
+# Archivos de NetBeans
+nbproject/
+build/
+dist/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
