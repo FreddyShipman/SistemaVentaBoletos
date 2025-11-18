@@ -16,7 +16,7 @@ public class AutenticacionFacade implements IAutenticacion {
     @Override
     public UsuarioDTO autenticar(UsuarioDTO credenciales) throws Exception {
         
-        System.out.println("--- FACADE MOCK (Autenticacion) ---");
+        System.out.println("----- FACADE MOCK (Autenticacion) -----");
         System.out.println("Intentando loguear a: " + credenciales.getNombreUsuario());
 
         // LÓGICA MOCK (Como si se usara una BD)

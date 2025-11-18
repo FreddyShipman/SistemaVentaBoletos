@@ -22,21 +22,17 @@ public class GestionConciertosFacade implements IGestionConciertos {
         }
         
         // 2. Simular que lo guarda
-        System.out.println("--- FACADE MOCK ---");
         System.out.println("Guardando concierto (simulado): " + dto.getNombre());
         System.out.println("Artista: " + dto.getArtista());
         System.out.println("Fecha: " + dto.getFecha());
         System.out.println("Lugar: " + dto.getLugar());
-        System.out.println("--- FIN SIMULACION ---");
         // No se guarda nada realmente, solo simula un guardado, como se imprime en consola
     }
 
     @Override
     public List<ConciertoDTO> obtenerTodosLosConciertos() {
         // Devolvemos una lista falsa   
-        System.out.println("--- FACADE MOCK ---");
         System.out.println("Devolviendo lista de conciertos (simulada)");
-        System.out.println("--- FIN SIMULACION ---");
         
         List<ConciertoDTO> listaFalsa = new ArrayList<>();
         

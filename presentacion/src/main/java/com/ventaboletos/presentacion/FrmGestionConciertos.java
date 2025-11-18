@@ -42,7 +42,7 @@ public class FrmGestionConciertos /*extends javax.swing.JFrame */ {
         // 1. Instanciamos nuestra fachada (implementación "Mock")
         IGestionConciertos negocio = new GestionConciertosFacade();
 
-        System.out.println("--- INICIO DE PRUEBAS (V1 - MOCK) ---");
+        System.out.println("----- INICIO DE PRUEBAS (V1 - MOCK) -----");
         
         // PRUEBA 1: REGISTRAR UN NUEVO CONCIERTO
         System.out.println("\n----- PRUEBA 1: Registrando Concierto... -----");
@@ -113,7 +113,7 @@ public class FrmGestionConciertos /*extends javax.swing.JFrame */ {
         }
         
         // PRUEBA 4: VENTA DE BOLETOS
-        System.out.println("\n--- PRUEBA 4: Probando Venta de Boletos Mock ---");
+        System.out.println("\n----- PRUEBA 4: Probando Venta de Boletos Mock -----");
         
         IVentaBoletos ventaNegocio = new VentaBoletosFacade();
         
@@ -156,7 +156,7 @@ public class FrmGestionConciertos /*extends javax.swing.JFrame */ {
             System.out.println("  -> Ticket: " + b.getIdBoleto() + " | Evento: " + b.getNombreConcierto());
         }
         
-        System.out.println("\n--- FIN DE PRUEBAS ---");
+        System.out.println("\n----- FIN DE PRUEBAS -----");
     }
     
     
