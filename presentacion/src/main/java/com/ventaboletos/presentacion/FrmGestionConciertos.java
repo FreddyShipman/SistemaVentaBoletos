@@ -4,6 +4,10 @@ package com.ventaboletos.presentacion;
 import com.ventaboletos.dto.ConciertoDTO;
 import com.ventaboletos.negocio.facade.IGestionConciertos;
 import com.ventaboletos.negocio.facade.GestionConciertosFacade;
+import com.ventaboletos.dto.UsuarioDTO;
+import com.ventaboletos.negocio.facade.AutenticacionFacade;
+import com.ventaboletos.negocio.facade.IAutenticacion;
+
 
 // Imports para el Test Driver
 import java.util.Date;
@@ -19,6 +23,7 @@ import java.util.List;
  * Esta clase representa la pantalla (JFrame) para gestionar conciertos.
  * * Por ahora (Versión 1), contiene un método main() para actuar como
  * un "Test Driver" de consola y probar la fachada "Mock".
+ * 
  * * @author JOSÉ ALFREDO GUZMAN MORENO - 00000252524
  */
 // 1. La clase ya está lista para ser un JFrame base
@@ -68,6 +73,41 @@ public class FrmGestionConciertos /*extends javax.swing.JFrame */ {
             for (ConciertoDTO c : lista) {
                 System.out.println("  -> " + c.getNombre() + " por " + c.getArtista() + " en " + c.getLugar());
             }
+        }
+        
+        // PRUEBA 3: AUTENTICACIÓN (LOGIN) ---
+        System.out.println("\n----- PRUEBA 3: Probando Login Mock -----");
+        
+        // 1. Instanciamos la fachada de autenticación
+        IAutenticacion loginNegocio = new AutenticacionFacade();
+
+        // SUB-PRUEBA A: Login Correcto (Admin)
+        try {
+            System.out.println("A) Intentando ingresar con usuario 'admin' y pass '12345'...");
+            UsuarioDTO credenciales = new UsuarioDTO("admin", "12345");
+            
+            UsuarioDTO usuarioLogueado = loginNegocio.autenticar(credenciales);
+            
+            System.out.println(">>> EXITO: Bienvenido " + usuarioLogueado.getNombreCompleto());
+            System.out.println(">>> Rol detectado: " + usuarioLogueado.getRol());
+            
+        } catch (Exception e) {
+            System.err.println(">>> FALLO INESPERADO: " + e.getMessage());
+        }
+
+        // SUB-PRUEBA B: Login Incorrecto (Error esperado)
+        try {
+            System.out.println("\nB) Intentando ingresar con password incorrecto...");
+            UsuarioDTO credencialesMalas = new UsuarioDTO("admin", "password_erroneo");
+            
+            loginNegocio.autenticar(credencialesMalas);
+            
+            // Si llega aquí, la prueba falló porque debió lanzar error
+            System.err.println(">>> ERROR: El sistema dejo pasar una contraseña incorrecta");
+            
+        } catch (Exception e) {
+            System.out.println(">>> EXITO (Error esperado): El sistema rechazo el acceso");
+            System.out.println(">>> Mensaje recibido: " + e.getMessage());
         }
         
         System.out.println("\n--- FIN DE PRUEBAS ---");
