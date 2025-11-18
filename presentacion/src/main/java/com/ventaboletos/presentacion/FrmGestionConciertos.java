@@ -7,7 +7,9 @@ import com.ventaboletos.negocio.facade.GestionConciertosFacade;
 import com.ventaboletos.dto.UsuarioDTO;
 import com.ventaboletos.negocio.facade.AutenticacionFacade;
 import com.ventaboletos.negocio.facade.IAutenticacion;
-
+import com.ventaboletos.dto.BoletoDTO;
+import com.ventaboletos.negocio.facade.IVentaBoletos;
+import com.ventaboletos.negocio.facade.VentaBoletosFacade;
 
 // Imports para el Test Driver
 import java.util.Date;
@@ -108,6 +110,50 @@ public class FrmGestionConciertos /*extends javax.swing.JFrame */ {
         } catch (Exception e) {
             System.out.println(">>> EXITO (Error esperado): El sistema rechazo el acceso");
             System.out.println(">>> Mensaje recibido: " + e.getMessage());
+        }
+        
+        // PRUEBA 4: VENTA DE BOLETOS
+        System.out.println("\n--- PRUEBA 4: Probando Venta de Boletos Mock ---");
+        
+        IVentaBoletos ventaNegocio = new VentaBoletosFacade();
+        
+        // SUB-PRUEBA A: Compra Exitosa
+        try {
+            System.out.println("A) Intentando comprar asiento B-10...");
+            BoletoDTO compra = new BoletoDTO();
+            compra.setIdUsuario("cliente1");
+            compra.setIdConcierto("1");
+            compra.setFila("B");
+            compra.setAsiento("10");
+            compra.setCosto(1500.00);
+            
+            ventaNegocio.comprarBoleto(compra); // Debe imprimir ÉXITO
+            
+        } catch (Exception e) {
+            System.err.println(">>> FALLO: " + e.getMessage());
+        }
+
+        // SUB-PRUEBA B: Compra Fallida (Asiento Ocupado)
+        try {
+            System.out.println("\nB) Intentando comprar asiento prohibido (A-1)...");
+            BoletoDTO compraMala = new BoletoDTO();
+            compraMala.setIdUsuario("cliente1");
+            compraMala.setFila("A");
+            compraMala.setAsiento("1"); // Este activa el error en el Mock
+            compraMala.setCosto(1500.00);
+            
+            ventaNegocio.comprarBoleto(compraMala);
+            System.err.println(">>> ERROR: El sistema permitio comprar un asiento ocupado");
+            
+        } catch (Exception e) {
+            System.out.println(">>> EXITO (Error esperado): " + e.getMessage());
+        }
+
+        // SUB-PRUEBA C: Historial
+        System.out.println("\nC) Consultando historial de compras...");
+        List<BoletoDTO> misBoletos = ventaNegocio.consultarHistorialCompras("cliente1");
+        for (BoletoDTO b : misBoletos) {
+            System.out.println("  -> Ticket: " + b.getIdBoleto() + " | Evento: " + b.getNombreConcierto());
         }
         
         System.out.println("\n--- FIN DE PRUEBAS ---");
