@@ -2,7 +2,7 @@ package com.ventaboletos.negocio.facade;
 
 /**
  *
- * @author alfre
+ * @author JOSÉ ALFREDO GUZMAN MORENO - 00000252524
  */
 
 import com.ventaboletos.dto.ConciertoDTO;

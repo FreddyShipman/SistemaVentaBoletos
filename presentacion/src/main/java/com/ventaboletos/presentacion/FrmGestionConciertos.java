@@ -1,10 +1,5 @@
 package com.ventaboletos.presentacion;
 
-/**
- *
- * @author alfre
- */
-
 // Imports necesarios para el DTO y la Fachada
 import com.ventaboletos.dto.ConciertoDTO;
 import com.ventaboletos.negocio.facade.IGestionConciertos;
