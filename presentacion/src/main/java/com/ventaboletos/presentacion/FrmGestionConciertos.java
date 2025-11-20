@@ -8,8 +8,15 @@ import com.ventaboletos.dto.UsuarioDTO;
 import com.ventaboletos.negocio.facade.AutenticacionFacade;
 import com.ventaboletos.negocio.facade.IAutenticacion;
 import com.ventaboletos.dto.BoletoDTO;
+import com.ventaboletos.dto.SolicitudDTO;
 import com.ventaboletos.negocio.facade.IVentaBoletos;
 import com.ventaboletos.negocio.facade.VentaBoletosFacade;
+import com.ventaboletos.negocio.facade.IGestionarBoletosPropios;
+import com.ventaboletos.negocio.facade.GestionarBoletosPropiosFacade;
+import com.ventaboletos.negocio.facade.GestionarSolicitudesDeBoletosFacade;
+import com.ventaboletos.negocio.facade.IGestionarSolicitudesDeBoletos;
+import com.ventaboletos.negocio.facade.IRegistrarUsuario;
+import com.ventaboletos.negocio.facade.RegistrarUsuarioFacade;
 
 // Imports para el Test Driver
 import java.util.Date;
@@ -154,6 +161,104 @@ public class FrmGestionConciertos /*extends javax.swing.JFrame */ {
         List<BoletoDTO> misBoletos = ventaNegocio.consultarHistorialCompras("cliente1");
         for (BoletoDTO b : misBoletos) {
             System.out.println("  -> Ticket: " + b.getIdBoleto() + " | Evento: " + b.getNombreConcierto());
+        }
+        // PRUEBA 5: GESTION DE BOLETOS PROPIOS 
+        System.out.println("\n----- PRUEBA 5: Gestionar Boletos Propios (Mock) -----");
+        
+        IGestionarBoletosPropios misBoletosNegocio = new GestionarBoletosPropiosFacade();
+        
+        // SUB-PRUEBA A: Ver mis boletos
+        System.out.println("A) Consultando los boletos del usuario 'jonathan'...");
+        List<BoletoDTO> listaPropios = misBoletosNegocio.obtenerBoletosPorUsuario("jonathan");
+        
+        for(BoletoDTO b : listaPropios){
+            System.out.println("  -> ID: " + b.getIdBoleto() + 
+                               " | Evento: " + b.getNombreConcierto() + 
+                               " | Estado: " + b.getEstado());
+        }
+        
+        // SUB-PRUEBA B: Cancelar un boleto
+        System.out.println("\nB) Cancelando el boleto TICKET-001...");
+        boolean resultadoCancelacion = misBoletosNegocio.cancelarBoleto("TICKET-001");
+        if(resultadoCancelacion){
+            System.out.println(">>> EXITO: El boleto fue cancelado");
+        } else {
+            System.out.println(">>> FALLO: No se pudo cancelar");
+        }
+        
+        // Probar el filtro por fecha y chechar que solo traiga el boleto del evento Madrid vs Barca
+        // SUB-PRUEBA C: Buscar por Fecha
+        System.out.println("\nC) Buscando boletos comprados hoy (Filtro por fecha)...");
+        
+        Date fechaFiltro = new Date(); // Usamos la fecha actual para la prueba
+        
+        // Llamamos al metodo de busqueda
+        List<BoletoDTO> boletosFiltrados = misBoletosNegocio.buscarBoletosPorFecha("jonathan", fechaFiltro);
+        
+        if (boletosFiltrados.isEmpty()) {
+            System.out.println(">>> No se encontraron boletos en esa fecha");
+        } else {
+            for (BoletoDTO b : boletosFiltrados) {
+                System.out.println("  -> Encontrado: " + b.getNombreConcierto() + 
+                                   " | Asiento: " + b.getFila() + "-" + b.getAsiento() +
+                                   " | Costo: $" + b.getCosto());
+            }
+        }
+        
+        // PRUEBA 6: GESTION DE SOLICITUDES 
+        System.out.println("\n----- PRUEBA 6: Gestionar Solicitudes (Mock) -----");
+        
+        IGestionarSolicitudesDeBoletos solicitudesNegocio = new GestionarSolicitudesDeBoletosFacade();
+        
+        // SUB-PRUEBA A: Crear una solicitud
+        System.out.println("A) Creando solicitud de aclaracion...");
+        SolicitudDTO nuevaSol = new SolicitudDTO();
+        nuevaSol.setIdUsuario("jonathan");
+        nuevaSol.setTipoSolicitud("ACLARACION");
+        nuevaSol.setDescripcion("No me llego el correo de confirmacion");
+        
+        solicitudesNegocio.registrarSolicitud(nuevaSol);
+        
+        // SUB-PRUEBA B: Consultar mis solicitudes
+        System.out.println("\nB) Consultando historial de solicitudes...");
+        List<SolicitudDTO> misSolicitudes = solicitudesNegocio.obtenerSolicitudesPorUsuario("jonathan");
+        
+        for(SolicitudDTO s : misSolicitudes){
+            System.out.println("  -> [" + s.getEstado() + "] " + s.getTipoSolicitud() + ": " + s.getDescripcion());
+        }
+        
+        // PRUEBA 7: REGISTRAR USUARIO
+        System.out.println("\n----- PRUEBA 7: Registrar Usuario (Mock) -----");
+        
+        IRegistrarUsuario registroNegocio = new RegistrarUsuarioFacade();
+        
+        // SUB-PRUEBA A: Registro Exitoso
+        System.out.println("A) Intentando registrar usuario nuevo 'jonathan_dev'...");
+        try {
+            UsuarioDTO nuevoUser = new UsuarioDTO();
+            nuevoUser.setNombreUsuario("jonathan_dev");
+            nuevoUser.setPassword("java123");
+            nuevoUser.setNombreCompleto("Jonathan Romero");
+            nuevoUser.setRol("Cliente");
+            
+            registroNegocio.registrarNuevoUsuario(nuevoUser); // Debe salir EXITO
+            
+        } catch (Exception e) {
+            System.err.println(">>> FALLO: " + e.getMessage());
+        }
+        
+        // SUB-PRUEBA B: Registro Fallido (Usuario Duplicado)
+        System.out.println("\nB) Intentando registrar usuario existente 'admin'...");
+        try {
+            UsuarioDTO userDuplicado = new UsuarioDTO();
+            userDuplicado.setNombreUsuario("admin"); // Este ya existe en el mock
+            userDuplicado.setPassword("cualquiercosa");
+            
+            registroNegocio.registrarNuevoUsuario(userDuplicado);
+            System.err.println(">>> ERROR: El sistema permitio duplicados.");
+            
+        } catch (Exception e) {
+            System.out.println(">>> EXITO (Error esperado): " + e.getMessage());
         }
         
         System.out.println("\n----- FIN DE PRUEBAS -----");
