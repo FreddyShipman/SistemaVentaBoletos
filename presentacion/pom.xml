@@ -8,6 +8,20 @@
     </parent>
     <artifactId>presentacion</artifactId>
     <packaging>jar</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -22,6 +36,6 @@
     </dependencies>
     <properties>
         <maven.compiler.release>24</maven.compiler.release>
-        <exec.mainClass>conciertos.presentacion.Presentacion</exec.mainClass>
+        <exec.mainClass>com.ventaboletos.presentacion.FrmMisBoletos</exec.mainClass>
     </properties>
 </project>
