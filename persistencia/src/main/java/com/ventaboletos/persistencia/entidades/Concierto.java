@@ -1,29 +1,35 @@
-package com.ventaboletos.dto;
+package com.ventaboletos.persistencia.entidades;
 
 /**
  *
- * @author JOSÉ ALFREDO GUZMAN MORENO - 00000252524
+ * @author alfre
  */
 
 import java.util.Date;
 
-public class ConciertoDTO {
-    private String id;
+public class Concierto {
+    private int id;
     private String nombre;
     private String artista;
     private Date fecha;
     private String lugar;
 
-    public ConciertoDTO() {
-    
+    public Concierto() {}
+
+    public Concierto(int id, String nombre, String artista, Date fecha, String lugar) {
+        this.id = id;
+        this.nombre = nombre;
+        this.artista = artista;
+        this.fecha = fecha;
+        this.lugar = lugar;
     }
 
     // Getters y Setters
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -58,5 +64,6 @@ public class ConciertoDTO {
     public void setLugar(String lugar) {
         this.lugar = lugar;
     }
+    
     
 }

@@ -1,22 +1,34 @@
-package com.ventaboletos.dto;
+package com.ventaboletos.persistencia.entidades;
 
 /**
  *
- * @author JOSÉ ALFREDO GUZMAN MORENO - 00000252524
+ * @author alfre
  */
 
-public class BoletoDTO {
-    private String id;
+public class Boleto {
+    // Atributos privados
+    private int id;
     private String nombreAsistente;
-    private String asiento; 
+    private String asiento;
     private double precio;
+
+    // Constructor vacío
+    public Boleto() {
+    }
     
+    // Constructor con datos
+    public Boleto(String nombre, String asiento, double precio) {
+        this.nombreAsistente = nombre;
+        this.asiento = asiento;
+        this.precio = precio;
+    }
+
     // Getters y Setters
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -42,6 +54,5 @@ public class BoletoDTO {
 
     public void setPrecio(double precio) {
         this.precio = precio;
-    }
-    
+    } 
 }

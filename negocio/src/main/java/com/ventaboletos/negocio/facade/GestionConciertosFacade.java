@@ -6,53 +6,47 @@ package com.ventaboletos.negocio.facade;
  */
 
 import com.ventaboletos.dto.ConciertoDTO;
+import com.ventaboletos.negocio.facade.util.Conversor;
+import com.ventaboletos.persistencia.entidades.Concierto;
+import com.ventaboletos.persistencia.fachada.IPersistencia;
+import com.ventaboletos.persistencia.fachada.PersistenciaFacade;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-// Esta es la implementación "Mock" (Simulada)
-// Fíjate que implementa la interfaz
 public class GestionConciertosFacade implements IGestionConciertos {
+
+    private final IPersistencia persistencia;
+
+    public GestionConciertosFacade() {
+        this.persistencia = new PersistenciaFacade();
+    }
 
     @Override
     public void registrarNuevoConcierto(ConciertoDTO dto) throws Exception {
-        // 1. Simular validación
+        // 1. Validaciones de Negocio
         if (dto.getNombre() == null || dto.getNombre().isBlank()) {
-            throw new Exception("El nombre es obligatorio (simulacion de error)");
+            throw new Exception("El nombre del concierto es obligatorio.");
         }
-        
-        // 2. Simular que lo guarda
-        System.out.println("Guardando concierto (simulado): " + dto.getNombre());
-        System.out.println("Artista: " + dto.getArtista());
-        System.out.println("Fecha: " + dto.getFecha());
-        System.out.println("Lugar: " + dto.getLugar());
-        // No se guarda nada realmente, solo simula un guardado, como se imprime en consola
+        if (dto.getArtista() == null || dto.getArtista().isBlank()) {
+            throw new Exception("El artista es obligatorio.");
+        }
+        if (dto.getFecha() == null) {
+            throw new Exception("La fecha es obligatoria.");
+        }
+
+        // 2. Convertir y Guardar
+        Concierto entidad = Conversor.dtoToEntity(dto);
+        persistencia.registrarConcierto(entidad);
     }
 
     @Override
     public List<ConciertoDTO> obtenerTodosLosConciertos() {
-        // Devolvemos una lista falsa   
-        System.out.println("Devolviendo lista de conciertos (simulada)");
+        List<Concierto> entidades = persistencia.consultarConciertos();
+        List<ConciertoDTO> dtos = new ArrayList<>();
         
-        List<ConciertoDTO> listaFalsa = new ArrayList<>();
-        
-        ConciertoDTO c1 = new ConciertoDTO();
-        c1.setId("1");
-        c1.setNombre("Concierto 1");
-        c1.setArtista("Artista Mock");
-        c1.setFecha(new Date()); //Da la fecha de hoy
-        c1.setLugar("Estadio 1");
-        
-        ConciertoDTO c2 = new ConciertoDTO();
-        c2.setId("2");
-        c2.setNombre("Concierto 2");
-        c2.setArtista("Banda Mock");
-        c2.setFecha(new Date());
-        c2.setLugar("Arena ITSON");
-        
-        listaFalsa.add(c1);
-        listaFalsa.add(c2);
-        
-        return listaFalsa;
+        for (Concierto c : entidades) {
+            dtos.add(Conversor.entityToDTO(c));
+        }
+        return dtos;
     }
 }
