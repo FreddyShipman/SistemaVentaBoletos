@@ -36,6 +36,6 @@
     </dependencies>
     <properties>
         <maven.compiler.release>24</maven.compiler.release>
-        <exec.mainClass>com.ventaboletos.presentacion.FrmMisBoletos</exec.mainClass>
+        <exec.mainClass>com.ventaboletos.presentacion.FrmRegistro</exec.mainClass>
     </properties>
 </project>
