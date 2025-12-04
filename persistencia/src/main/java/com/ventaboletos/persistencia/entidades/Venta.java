@@ -1,67 +1,44 @@
 package com.ventaboletos.persistencia.entidades;
 
-import java.util.Date;
-import java.util.List;
-
 /**
  *
  * @author alfre
  */
 
+import java.util.Date;
+import java.util.List;
+
 public class Venta {
-    // Atributos privados
-    private int id;
-    private int idConcierto;
-    private String nombreCliente;
-    private Date fechaVenta;
+    private String idVenta;
+    private Date fecha;
     private double total;
-    private List<Boleto> boletos;
+    private Usuario cliente;
+    private Concierto concierto;
+    private List<Boleto> boletosVendidos;
 
-    // Constructor vacío
-    public Venta() {
-    }
-    
-    // Constructor con datos
-    public Venta(int id, int idConcierto, String nombreCliente, Date fechaVenta, double total, List<Boleto> boletos) {
-        this.id = id;
-        this.idConcierto = idConcierto;
-        this.nombreCliente = nombreCliente;
-        this.fechaVenta = fechaVenta;
+    public Venta(Date fecha, double total, Usuario cliente, Concierto concierto, List<Boleto> boletosVendidos) {
+        this.fecha = fecha;
         this.total = total;
-        this.boletos = boletos;
-    }
-    
-    // Getters y Setters
-    public int getId() {
-        return id;
+        this.cliente = cliente;
+        this.concierto = concierto;
+        this.boletosVendidos = boletosVendidos;
+        this.idVenta = "VEN-" + System.currentTimeMillis();
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getIdVenta() {
+        return idVenta;
     }
 
-    public int getIdConcierto() {
-        return idConcierto;
+    public void setIdVenta(String idVenta) {
+        this.idVenta = idVenta;
     }
 
-    public void setIdConcierto(int idConcierto) {
-        this.idConcierto = idConcierto;
+    public Date getFecha() {
+        return fecha;
     }
 
-    public String getNombreCliente() {
-        return nombreCliente;
-    }
-
-    public void setNombreCliente(String nombreCliente) {
-        this.nombreCliente = nombreCliente;
-    }
-
-    public Date getFechaVenta() {
-        return fechaVenta;
-    }
-
-    public void setFechaVenta(Date fechaVenta) {
-        this.fechaVenta = fechaVenta;
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
     }
 
     public double getTotal() {
@@ -72,12 +49,34 @@ public class Venta {
         this.total = total;
     }
 
-    public List<Boleto> getBoletos() {
-        return boletos;
+    public Usuario getCliente() {
+        return cliente;
     }
 
-    public void setBoletos(List<Boleto> boletos) {
-        this.boletos = boletos;
+    public void setCliente(Usuario cliente) {
+        this.cliente = cliente;
+    }
+
+    public Concierto getConcierto() {
+        return concierto;
+    }
+
+    public void setConcierto(Concierto concierto) {
+        this.concierto = concierto;
+    }
+
+    public List<Boleto> getBoletosVendidos() {
+        return boletosVendidos;
+    }
+
+    public void setBoletosVendidos(List<Boleto> boletosVendidos) {
+        this.boletosVendidos = boletosVendidos;
     }
     
+    public int getCantidadBoletos() {
+        if (boletosVendidos == null) {
+            return 0;
+        }
+        return boletosVendidos.size();
+    }
 }

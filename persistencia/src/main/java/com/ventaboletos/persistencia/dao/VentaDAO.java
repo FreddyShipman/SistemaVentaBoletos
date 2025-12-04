@@ -9,29 +9,38 @@ import com.ventaboletos.persistencia.entidades.Venta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VentaDAO implements IVentaDAO {
-    
-    // Simulación de Base de Datos en Memoria (Static para que persista mientras corre la app)
-    private static List<Venta> tablaVentas = new ArrayList<>();
 
-    @Override
-    public boolean registrarVenta(Venta venta) {
-        // Simulamos Auto-Increment ID
-        // Si la lista está vacía, el ID será 1, si tiene 1 elemento, será 2, etc.
-        venta.setId(tablaVentas.size() + 1);
-        
-        // Guardamos en la lista (INSERT)
-        return tablaVentas.add(venta);
+public class VentaDAO {
+    private static VentaDAO instancia;
+    private List<Venta> baseDeDatosVentas;
+
+    private VentaDAO() {
+        this.baseDeDatosVentas = new ArrayList<>();
     }
 
-    @Override
-    public List<Venta> obtenerVentasPorConcierto(int idConcierto) {
-        // Simulamos un SELECT * WHERE id_concierto = ?
-        List<Venta> resultado = new ArrayList<>();
-        
-        for (Venta v : tablaVentas) {
-            if (v.getIdConcierto() == idConcierto) {
-                resultado.add(v);
+    public static VentaDAO getInstancia() {
+        if (instancia == null) {
+            instancia = new VentaDAO();
+        }
+        return instancia;
+    }
+
+    public void guardar(Venta venta) {
+        baseDeDatosVentas.add(venta);
+        System.out.println("LOG DAO: Venta guardada con ID " + venta.getIdVenta());
+    }
+
+    public List<Venta> obtenerTodas() {
+        return baseDeDatosVentas;
+    }
+    
+    public java.util.List<Venta> obtenerVentasPorConcierto(String nombreConcierto) {
+        java.util.List<Venta> resultado = new java.util.ArrayList<>();
+        if (baseDeDatosVentas != null) {
+            for (Venta v : baseDeDatosVentas) {
+                if (v.getConcierto().getNombre().equalsIgnoreCase(nombreConcierto)) {
+                    resultado.add(v);
+                }
             }
         }
         return resultado;

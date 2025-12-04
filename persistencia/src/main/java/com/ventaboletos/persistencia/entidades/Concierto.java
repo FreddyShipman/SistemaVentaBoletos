@@ -5,32 +5,27 @@ package com.ventaboletos.persistencia.entidades;
  * @author alfre
  */
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Concierto {
-    private int id;
     private String nombre;
     private String artista;
     private Date fecha;
     private String lugar;
+    private List<Zona> zonas; 
 
-    public Concierto() {}
-
-    public Concierto(int id, String nombre, String artista, Date fecha, String lugar) {
-        this.id = id;
+    public Concierto(String nombre, String artista, Date fecha, String lugar) {
         this.nombre = nombre;
         this.artista = artista;
         this.fecha = fecha;
         this.lugar = lugar;
+        this.zonas = new ArrayList<>();
     }
 
-    // Getters y Setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+    public void agregarZona(Zona zona) {
+        this.zonas.add(zona);
     }
 
     public String getNombre() {
@@ -64,6 +59,12 @@ public class Concierto {
     public void setLugar(String lugar) {
         this.lugar = lugar;
     }
-    
-    
+
+    public List<Zona> getZonas() {
+        return zonas;
+    }
+
+    public void setZonas(List<Zona> zonas) {
+        this.zonas = zonas;
+    }
 }

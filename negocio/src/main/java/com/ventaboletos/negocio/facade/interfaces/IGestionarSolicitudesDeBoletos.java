@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.ventaboletos.negocio.facade;
+package com.ventaboletos.negocio.facade.interfaces;
 
 import com.ventaboletos.dto.SolicitudDTO;
 import java.util.List;

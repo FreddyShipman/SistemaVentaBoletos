@@ -4,6 +4,7 @@
  */
 package com.ventaboletos.negocio.facade;
 
+import com.ventaboletos.negocio.facade.interfaces.IGestionarSolicitudesDeBoletos;
 import com.ventaboletos.dto.SolicitudDTO;
 import java.util.ArrayList;
 import java.util.Date;

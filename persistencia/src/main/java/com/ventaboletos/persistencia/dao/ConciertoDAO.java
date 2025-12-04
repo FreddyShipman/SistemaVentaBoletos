@@ -7,36 +7,54 @@ package com.ventaboletos.persistencia.dao;
 
 import com.ventaboletos.persistencia.entidades.Concierto;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-public class ConciertoDAO implements IConciertoDAO {
+public class ConciertoDAO {
 
-    private static List<Concierto> bd = new ArrayList<>();
+    private static ConciertoDAO instancia;
+    private List<Concierto> baseDeDatosFalsa;
 
-    static {
-        bd.add(new Concierto(1, "Luis Miguel Tour 2024", "Luis Miguel", new Date(), "Arena CDMX"));
-        bd.add(new Concierto(2, "The Eras Tour", "Taylor Swift", new Date(), "Foro Sol"));
-        bd.add(new Concierto(3, "Mañana Será Bonito", "Karol G", new Date(), "Estadio Azteca"));
-        bd.add(new Concierto(4, "Rock en tu Idioma", "Caifanes", new Date(), "Palacio de los Deportes"));
-        bd.add(new Concierto(5, "Prófugos del Anexo", "Julión y Alfredo", new Date(), "Estadio Banorte"));
+    private ConciertoDAO() {
+        this.baseDeDatosFalsa = new ArrayList<>();
+        System.out.println("LOG: Base de datos (Mock) inicializada.");
+    }
+    
+    public static ConciertoDAO getInstancia() {
+        if (instancia == null) {
+            instancia = new ConciertoDAO();
+        }
+        return instancia;
     }
 
-    @Override
-    public boolean agregar(Concierto c) {
-        int maxId = 0;
-        for (Concierto existente : bd) {
-            if (existente.getId() > maxId) {
-                maxId = existente.getId();
+    public void guardar(Concierto concierto) {
+        baseDeDatosFalsa.add(concierto);
+        System.out.println("LOG DAO: Se guardó el concierto -> " + concierto.getNombre());
+    }
+
+    public List<Concierto> obtenerTodos() {
+        return baseDeDatosFalsa;
+    }
+    
+    public java.util.List<Concierto> buscarPorRangoFechas(java.util.Date fechaInicio, java.util.Date fechaFin) {
+        java.util.List<Concierto> resultado = new java.util.ArrayList<>();
+        for (Concierto c : baseDeDatosFalsa) {
+            if ((c.getFecha().after(fechaInicio) && c.getFecha().before(fechaFin)) || 
+                c.getFecha().equals(fechaInicio) || c.getFecha().equals(fechaFin)) {
+                resultado.add(c);
             }
         }
-        c.setId(maxId + 1);
-        
-        return bd.add(c);
+        return resultado;
     }
-
-    @Override
-    public List<Concierto> buscarTodos() {
-        return new ArrayList<>(bd);
+    
+    public java.util.List<Concierto> buscarActivos() {
+        java.util.List<Concierto> activos = new java.util.ArrayList<>();
+        java.util.Date hoy = new java.util.Date();
+        
+        for (Concierto c : baseDeDatosFalsa) {
+            if (c.getFecha().after(hoy) || c.getFecha().equals(hoy)) {
+                activos.add(c);
+            }
+        }
+        return activos;
     }
 }

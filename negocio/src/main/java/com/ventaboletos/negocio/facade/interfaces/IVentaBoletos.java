@@ -1,4 +1,4 @@
-package com.ventaboletos.negocio.facade;
+package com.ventaboletos.negocio.facade.interfaces;
 
 /**
  *

@@ -5,47 +5,43 @@ package com.ventaboletos.persistencia.entidades;
  * @author alfre
  */
 
+import java.util.UUID;
+
 public class Boleto {
-    // Atributos privados
-    private int id;
-    private String nombreAsistente;
-    private String asiento;
+    private String idBoleto;
+    private String codigoQR;
+    private String nombreAsiento;
     private double precio;
 
-    // Constructor vacío
-    public Boleto() {
-    }
-    
-    // Constructor con datos
-    public Boleto(String nombre, String asiento, double precio) {
-        this.nombreAsistente = nombre;
-        this.asiento = asiento;
+    public Boleto(String nombreAsiento, double precio) {
+        this.idBoleto = UUID.randomUUID().toString();
+        this.nombreAsiento = nombreAsiento;
         this.precio = precio;
+        this.codigoQR = "QR-" + idBoleto;
     }
 
-    // Getters y Setters
-    public int getId() {
-        return id;
+    public String getIdBoleto() {
+        return idBoleto;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdBoleto(String idBoleto) {
+        this.idBoleto = idBoleto;
     }
 
-    public String getNombreAsistente() {
-        return nombreAsistente;
+    public String getCodigoQR() {
+        return codigoQR;
     }
 
-    public void setNombreAsistente(String nombreAsistente) {
-        this.nombreAsistente = nombreAsistente;
+    public void setCodigoQR(String codigoQR) {
+        this.codigoQR = codigoQR;
     }
 
-    public String getAsiento() {
-        return asiento;
+    public String getNombreAsiento() {
+        return nombreAsiento;
     }
 
-    public void setAsiento(String asiento) {
-        this.asiento = asiento;
+    public void setNombreAsiento(String nombreAsiento) {
+        this.nombreAsiento = nombreAsiento;
     }
 
     public double getPrecio() {
@@ -54,5 +50,5 @@ public class Boleto {
 
     public void setPrecio(double precio) {
         this.precio = precio;
-    } 
+    }
 }
