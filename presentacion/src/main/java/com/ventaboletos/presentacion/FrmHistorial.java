@@ -6,20 +6,33 @@ package com.ventaboletos.presentacion;
 
 /**
  *
- * @author jonyco
+ * @author JONATHAN ROMERO OROZCO - 00000251632
  */
+import com.ventaboletos.dto.BoletoDTO;
+import com.ventaboletos.negocio.facade.INavegacion;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+
 public class FrmHistorial extends JPanel {
+
+    // Referencia para navegar
+    private INavegacion navegador;
 
     // Componentes públicos
     public JTextField txtFechaDesde, txtFechaHasta;
     public JButton btnFiltrar;
     public JPanel panelItemsHistorial;
 
+    // Constructor vacío para compatibilidad (pasa null)
     public FrmHistorial() {
+        this(null);
+    }
+
+    // Constructor Principal con Navegación
+    public FrmHistorial(INavegacion navegador) {
+        this.navegador = navegador;
         initComponents();
     }
 
@@ -82,7 +95,7 @@ public class FrmHistorial extends JPanel {
         panelItemsHistorial.setLayout(new BoxLayout(panelItemsHistorial, BoxLayout.Y_AXIS));
         panelItemsHistorial.setOpaque(false);
 
-        // ITEMS DE EJEMPLO
+        // ITEMS DE EJEMPLO (Con lógica de navegación añadida en el método)
         panelItemsHistorial.add(crearItemHistorial("Compra Realizada", "28 Mayo, 09:30 AM", "The Weeknd", "$3,500.00 MXN", Color.GREEN));
         panelItemsHistorial.add(Box.createVerticalStrut(15));
         panelItemsHistorial.add(crearItemHistorial("Transferencia Enviada", "25 Mayo, 02:15 PM", "Dua Lipa", "1 Boleto", Color.BLUE));
@@ -110,7 +123,6 @@ public class FrmHistorial extends JPanel {
         JPanel iconPanel = new JPanel();
         iconPanel.setPreferredSize(new Dimension(40, 40));
         iconPanel.setBackground(colorIcono.darker().darker());
-        // Normalmente usarías un JLabel con Icon aquí
         panel.add(iconPanel, BorderLayout.WEST);
 
         // Centro
@@ -128,10 +140,31 @@ public class FrmHistorial extends JPanel {
         center.add(lblBottom);
         panel.add(center, BorderLayout.CENTER);
 
-        // Derecha (Link/Botón)
-        JLabel lblVer = new JLabel("Ver Detalles");
-        lblVer.setForeground(Color.decode("#a855f7"));
-        panel.add(lblVer, BorderLayout.EAST);
+        // --- Derecha (Botón de Ver Detalles) ---
+        // Cambiamos el JLabel por un JButton estilizado como link
+        JButton btnVer = new JButton("Ver Detalles");
+        btnVer.setForeground(Color.decode("#a855f7"));
+        btnVer.setBackground(Color.decode("#18181b")); // Mismo fondo que el panel
+        btnVer.setBorderPainted(false);
+        btnVer.setFocusPainted(false);
+        btnVer.setContentAreaFilled(false); // Para que parezca solo texto
+        btnVer.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        // Acción de Navegación
+        btnVer.addActionListener(e -> {
+            if(navegador != null) {
+                // Creamos un DTO "al vuelo" con la info disponible para ver algo en el detalle
+                BoletoDTO dtoSimulado = new BoletoDTO();
+                dtoSimulado.setNombreConcierto(evento); // Pasamos el nombre del evento
+                dtoSimulado.setFila("Historial");       // Dato dummy
+                dtoSimulado.setAsiento("-");
+                
+                // Navegamos
+                navegador.cambiarVista("DETALLE_BOLETO", dtoSimulado);
+            }
+        });
+        
+        panel.add(btnVer, BorderLayout.EAST);
 
         return panel;
     }
@@ -157,15 +190,16 @@ public class FrmHistorial extends JPanel {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Historial");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new FrmHistorial());
+            
+            // Pasamos null para probar solo la vista
+            frame.setContentPane(new FrmHistorial(null));
+            
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
     }
-
 }

@@ -4,29 +4,43 @@ package com.ventaboletos.negocio.facade;
  *
  * @author JOSÉ ALFREDO GUZMAN MORENO - 00000252524
  */
-
 import com.ventaboletos.dto.UsuarioDTO;
 
 /**
- * Implementación MOCK (Simulada) de la fachada de autenticación.
- * Valida contra datos "quemados" en el código.
+ * Implementación MOCK (Simulada) de la fachada de autenticación. Valida contra
+ * datos "quemados" en el código.
  */
 public class AutenticacionFacade implements IAutenticacion {
 
     @Override
+    public boolean registrarUsuario(UsuarioDTO usuario) {
+        System.out.println(">>> Mock: Intentando registrar usuario...");
+        System.out.println("    Nombre: " + usuario.getNombreCompleto());
+        System.out.println("    Email/User: " + usuario.getNombreUsuario());
+
+        // Simulación: Si el email es "error@test.com", decimos que ya existe
+        if ("error@test.com".equalsIgnoreCase(usuario.getNombreUsuario())) {
+            System.err.println(">>> Mock: El usuario ya existe.");
+            return false;
+        }
+
+        System.out.println(">>> Mock: Usuario registrado con éxito.");
+        return true;
+    }
+
+    @Override
     public UsuarioDTO autenticar(UsuarioDTO credenciales) throws Exception {
-        
+
         System.out.println("----- FACADE MOCK (Autenticacion) -----");
         System.out.println("Intentando loguear a: " + credenciales.getNombreUsuario());
 
         // LÓGICA MOCK (Como si se usara una BD)
-        
         // Simulación de un ADMIN
-        if ("admin".equalsIgnoreCase(credenciales.getNombreUsuario()) && 
-            "12345".equals(credenciales.getPassword())) {
-            
+        if ("admin".equalsIgnoreCase(credenciales.getNombreUsuario())
+                && "12345".equals(credenciales.getPassword())) {
+
             System.out.println(">>> Usuario 'admin' autenticado (Mock).");
-            
+
             // Creamos el DTO de respuesta con datos completos
             UsuarioDTO usuarioRespuesta = new UsuarioDTO();
             usuarioRespuesta.setNombreUsuario("admin");
@@ -34,13 +48,13 @@ public class AutenticacionFacade implements IAutenticacion {
             usuarioRespuesta.setRol("Admin");
             return usuarioRespuesta;
         }
-        
+
         // Simulación de un CLIENTE
-        if ("cliente".equalsIgnoreCase(credenciales.getNombreUsuario()) && 
-            "cliente01".equals(credenciales.getPassword())) {
-            
+        if ("cliente".equalsIgnoreCase(credenciales.getNombreUsuario())
+                && "cliente01".equals(credenciales.getPassword())) {
+
             System.out.println(">>> Usuario 'cliente' autenticado (Mock).");
-            
+
             UsuarioDTO usuarioRespuesta = new UsuarioDTO();
             usuarioRespuesta.setNombreUsuario("cliente");
             usuarioRespuesta.setNombreCompleto("Juan Cliente Frecuente");

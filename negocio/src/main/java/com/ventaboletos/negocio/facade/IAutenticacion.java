@@ -20,5 +20,6 @@ public interface IAutenticacion {
      * @throws Exception si la autenticación falla (usuario no existe, pass incorrecto).
      */
     UsuarioDTO autenticar(UsuarioDTO credenciales) throws Exception;
+    boolean registrarUsuario(UsuarioDTO usuario);
     
 }

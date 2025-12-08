@@ -4,134 +4,218 @@
  */
 package com.ventaboletos.presentacion;
 
+import com.ventaboletos.dto.SolicitudDTO;
+import com.ventaboletos.negocio.facade.GestionarSolicitudesDeBoletosFacade;
+import com.ventaboletos.negocio.facade.IGestionarSolicitudesDeBoletos;
+import com.ventaboletos.negocio.facade.INavegacion;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.text.SimpleDateFormat;
 
 /**
  *
- * @author jonyco
+ * @author JONATHAN ROMERO OROZCO - 00000251632
+ */
+/**
+ * Pantalla de detalle que recibe una SolicitudDTO y muestra su información.
  */
 public class FrmDetalleSolicitud extends JPanel {
 
-    public JButton btnAprobar;
-    public JButton btnRechazar;
-    public JTable tablaBoletos;
+    private INavegacion navegador;
+    private IGestionarSolicitudesDeBoletos solicitudesFacade;
+    private SolicitudDTO solicitudActual;
 
+    // Etiquetas dinámicas
+    private JLabel lblTituloId;
+    private JLabel lblTipo;
+    private JLabel lblEstado;
+    private JLabel lblFecha;
+    private JLabel lblIdBoleto;
+    private JTextArea txtDescripcion;
+    private JButton btnCancelarSolicitud;
+
+    // Constructor vacío
     public FrmDetalleSolicitud() {
+        this(null);
+    }
+
+    // Constructor conectado
+    public FrmDetalleSolicitud(INavegacion navegador) {
+        this.navegador = navegador;
+        this.solicitudesFacade = new GestionarSolicitudesDeBoletosFacade();
         initComponents();
     }
 
     private void initComponents() {
-        this.setLayout(new BorderLayout(20, 20)); // Espaciado
+        this.setLayout(new BorderLayout(20, 20));
         this.setBackground(Color.decode("#121212"));
         this.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
-        // --- Cabecera ---
-        JPanel panelHeader = new JPanel(new GridLayout(2, 1));
+        // --- Cabecera con Botón Volver ---
+        JPanel panelHeader = new JPanel(new BorderLayout());
         panelHeader.setOpaque(false);
 
-        JLabel lblBreadcrumb = new JLabel("Solicitudes / Solicitud #12345");
-        lblBreadcrumb.setForeground(Color.GRAY);
+        JButton btnVolver = new JButton("← Volver al Listado");
+        btnVolver.setForeground(Color.GRAY);
+        btnVolver.setContentAreaFilled(false);
+        btnVolver.setBorderPainted(false);
+        btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnVolver.setHorizontalAlignment(SwingConstants.LEFT);
+        btnVolver.addActionListener(e -> {
+            if (navegador != null) {
+                navegador.cambiarVista("SOLICITUDES");
+            }
+        });
 
-        JLabel lblTitulo = new JLabel("Solicitud #12345");
-        lblTitulo.setForeground(Color.WHITE);
-        lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 28));
+        lblTituloId = new JLabel("Solicitud #---");
+        lblTituloId.setForeground(Color.WHITE);
+        lblTituloId.setFont(new Font("SansSerif", Font.BOLD, 28));
 
-        panelHeader.add(lblBreadcrumb);
-        panelHeader.add(lblTitulo);
+        JPanel panelTitulos = new JPanel(new GridLayout(2, 1));
+        panelTitulos.setOpaque(false);
+        panelTitulos.add(btnVolver);
+        panelTitulos.add(lblTituloId);
 
+        panelHeader.add(panelTitulos, BorderLayout.WEST);
         this.add(panelHeader, BorderLayout.NORTH);
 
-        // --- Contenido Central ---
+        // --- Contenido Central (Formulario de Lectura) ---
         JPanel panelCentro = new JPanel();
         panelCentro.setLayout(new BoxLayout(panelCentro, BoxLayout.Y_AXIS));
         panelCentro.setOpaque(false);
 
-        // Sección 1: Info Usuario
-        panelCentro.add(crearSubtitulo("Informacion del Usuario"));
-        panelCentro.add(Box.createVerticalStrut(10));
-        panelCentro.add(crearFilaInfo("Nombre", "Carlos Mendoza"));
-        panelCentro.add(crearFilaInfo("Correo Electrónico", "carlos.mendoza@email.com"));
-        panelCentro.add(crearFilaInfo("Teléfono", "555-123-4567"));
+        // Grid de Datos
+        JPanel gridDatos = new JPanel(new GridLayout(0, 2, 20, 20));
+        gridDatos.setOpaque(false);
+        gridDatos.setMaximumSize(new Dimension(800, 200));
+        gridDatos.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        lblTipo = crearLabelValor("---");
+        lblEstado = crearLabelValor("---");
+        lblFecha = crearLabelValor("---");
+        lblIdBoleto = crearLabelValor("---");
+
+        gridDatos.add(crearItemDetalle("Tipo de Solicitud", lblTipo));
+        gridDatos.add(crearItemDetalle("Estado Actual", lblEstado));
+        gridDatos.add(crearItemDetalle("Fecha Creación", lblFecha));
+        gridDatos.add(crearItemDetalle("Boleto Relacionado", lblIdBoleto));
+
+        panelCentro.add(gridDatos);
         panelCentro.add(Box.createVerticalStrut(30));
 
-        // Sección 2: Tabla Boletos
-        panelCentro.add(crearSubtitulo("Boletos Solicitados"));
+        // Descripción
+        JLabel lblDesc = new JLabel("Descripción / Motivo:");
+        lblDesc.setForeground(Color.GRAY);
+        lblDesc.setFont(new Font("SansSerif", Font.BOLD, 14));
+        lblDesc.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        panelCentro.add(lblDesc);
         panelCentro.add(Box.createVerticalStrut(10));
 
-        String[] columnas = {"Concierto", "Fecha", "Cantidad", "Tipo de Boleto"};
-        Object[][] datos = {
-            {"Festival de Música Electrónica", "2024-07-20", "2", "General"}
-        };
+        txtDescripcion = new JTextArea();
+        txtDescripcion.setEditable(false);
+        txtDescripcion.setLineWrap(true);
+        txtDescripcion.setWrapStyleWord(true);
+        txtDescripcion.setBackground(Color.decode("#1f1f23"));
+        txtDescripcion.setForeground(Color.WHITE);
+        txtDescripcion.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        DefaultTableModel model = new DefaultTableModel(datos, columnas);
-        tablaBoletos = new JTable(model);
-        estilarTabla(tablaBoletos);
+        JScrollPane scrollDesc = new JScrollPane(txtDescripcion);
+        scrollDesc.setPreferredSize(new Dimension(800, 100));
+        scrollDesc.setBorder(BorderFactory.createLineBorder(Color.decode("#333333")));
+        scrollDesc.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JScrollPane scrollPane = new JScrollPane(tablaBoletos);
-        scrollPane.getViewport().setBackground(Color.decode("#1f1f23"));
-        scrollPane.setPreferredSize(new Dimension(800, 100));
-        scrollPane.setBorder(BorderFactory.createLineBorder(Color.decode("#333333")));
-
-        panelCentro.add(scrollPane);
+        panelCentro.add(scrollDesc);
 
         this.add(panelCentro, BorderLayout.CENTER);
 
         // --- Botones de Acción (Sur) ---
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelBotones.setOpaque(false);
 
-        btnAprobar = new JButton("Aprobar");
-        estilarBoton(btnAprobar, Color.decode("#8b5cf6")); // Morado
+        btnCancelarSolicitud = new JButton("Cancelar esta Solicitud");
+        estilarBoton(btnCancelarSolicitud, Color.decode("#ef4444")); // Rojo
 
-        btnRechazar = new JButton("Rechazar");
-        estilarBoton(btnRechazar, Color.decode("#3f3f46")); // Gris oscuro
+        btnCancelarSolicitud.addActionListener(e -> accionCancelar());
 
-        panelBotones.add(btnAprobar);
-        panelBotones.add(Box.createHorizontalStrut(10));
-        panelBotones.add(btnRechazar);
+        panelBotones.add(btnCancelarSolicitud);
 
         this.add(panelBotones, BorderLayout.SOUTH);
     }
 
-    // Auxiliares
-    private JLabel crearSubtitulo(String texto) {
-        JLabel lbl = new JLabel(texto);
-        lbl.setForeground(Color.WHITE);
-        lbl.setFont(new Font("SansSerif", Font.BOLD, 18));
-        lbl.setAlignmentX(Component.LEFT_ALIGNMENT);
-        return lbl;
+    /**
+     * MÉTODO CLAVE: Recibe el objeto desde el listado
+     */
+    public void mostrarDatos(SolicitudDTO solicitud) {
+        this.solicitudActual = solicitud;
+
+        if (solicitud == null) {
+            return;
+        }
+
+        lblTituloId.setText("Solicitud #" + solicitud.getIdSolicitud());
+        lblTipo.setText(solicitud.getTipoSolicitud());
+
+        // Colorear estado
+        String est = solicitud.getEstado();
+        lblEstado.setText(est);
+        if ("APROBADO".equals(est)) {
+            lblEstado.setForeground(Color.GREEN);
+        } else if ("RECHAZADO".equals(est)) {
+            lblEstado.setForeground(Color.RED);
+        } else {
+            lblEstado.setForeground(Color.ORANGE);
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        lblFecha.setText(solicitud.getFechaSolicitud() != null ? sdf.format(solicitud.getFechaSolicitud()) : "-");
+
+        lblIdBoleto.setText(solicitud.getIdBoleto() != null ? solicitud.getIdBoleto() : "N/A");
+        txtDescripcion.setText(solicitud.getDescripcion() != null ? solicitud.getDescripcion() : "Sin descripción.");
+
+        // Si ya no está pendiente, deshabilitar botón cancelar
+        btnCancelarSolicitud.setEnabled("PENDIENTE".equalsIgnoreCase(est) || "EN_REVISION".equalsIgnoreCase(est));
     }
 
-    private JPanel crearFilaInfo(String label, String valor) {
-        JPanel p = new JPanel(new BorderLayout());
+    private void accionCancelar() {
+        if (solicitudActual == null) {
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "¿Seguro que deseas cancelar esta solicitud?",
+                "Confirmar", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            boolean exito = solicitudesFacade.cancelarSolicitud(solicitudActual.getIdSolicitud());
+            if (exito) {
+                JOptionPane.showMessageDialog(this, "Solicitud cancelada.");
+                if (navegador != null) {
+                    navegador.cambiarVista("SOLICITUDES");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo cancelar.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    // Auxiliares Visuales
+    private JPanel crearItemDetalle(String titulo, JLabel labelValor) {
+        JPanel p = new JPanel(new GridLayout(2, 1));
         p.setOpaque(false);
-        p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-
-        JLabel l = new JLabel(label);
-        l.setForeground(Color.GRAY);
-        l.setPreferredSize(new Dimension(200, 20));
-
-        JLabel v = new JLabel(valor);
-        v.setForeground(Color.LIGHT_GRAY);
-
-        p.add(l, BorderLayout.WEST);
-        p.add(v, BorderLayout.CENTER);
-        p.add(new JSeparator(SwingConstants.HORIZONTAL), BorderLayout.SOUTH);
-
-        p.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JLabel t = new JLabel(titulo);
+        t.setForeground(Color.GRAY);
+        p.add(t);
+        p.add(labelValor);
         return p;
     }
 
-    private void estilarTabla(JTable table) {
-        table.setBackground(Color.decode("#1f1f23"));
-        table.setForeground(Color.WHITE);
-        table.setGridColor(Color.decode("#333333"));
-        table.setRowHeight(30);
-        table.getTableHeader().setBackground(Color.decode("#18181b"));
-        table.getTableHeader().setForeground(Color.LIGHT_GRAY);
+    private JLabel crearLabelValor(String texto) {
+        JLabel v = new JLabel(texto);
+        v.setForeground(Color.WHITE);
+        v.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        return v;
     }
 
     private void estilarBoton(JButton btn, Color bg) {
@@ -139,21 +223,7 @@ public class FrmDetalleSolicitud extends JPanel {
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
-        btn.setPreferredSize(new Dimension(100, 35));
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Detalle Solicitud");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new FrmDetalleSolicitud());
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
+        btn.setPreferredSize(new Dimension(200, 40));
+        btn.setFont(new Font("SansSerif", Font.BOLD, 14));
     }
 }

@@ -4,108 +4,133 @@
  */
 package com.ventaboletos.presentacion;
 
+import com.ventaboletos.dto.SolicitudDTO;
+import com.ventaboletos.negocio.facade.GestionarSolicitudesDeBoletosFacade;
+import com.ventaboletos.negocio.facade.IGestionarSolicitudesDeBoletos;
+import com.ventaboletos.negocio.facade.INavegacion;
 import java.awt.*;
+import java.util.Date;
 import javax.swing.*;
 
 /**
  *
- * @author jonyco
+ * @author JONATHAN ROMERO OROZCO - 00000251632
  */
+
 public class FrmCrearSolicitud extends JPanel {
 
-    // Componentes de la UI
-    public JComboBox<String> comboConcierto;
-    public JComboBox<String> comboTipoBoleto;
-    public JTextField txtCantidad;
-    public JTextField txtNombreContacto;
-    public JTextField txtEmailContacto;
-    public JButton btnSubmit;
+    private INavegacion navegador;
+    private IGestionarSolicitudesDeBoletos solicitudesFacade;
 
-    public FrmCrearSolicitud() {
+    // Componentes de la UI
+    public JComboBox<String> comboTipoSolicitud; // Cambiado de concierto a Tipo Solicitud para el ejemplo
+    public JTextField txtIdBoleto;
+    public JTextArea txtDescripcion;
+    public JButton btnSubmit;
+    public JButton btnCancelar;
+
+    public FrmCrearSolicitud(INavegacion navegador) {
+        this.navegador = navegador;
+        this.solicitudesFacade = new GestionarSolicitudesDeBoletosFacade();
         initComponents();
     }
 
     private void initComponents() {
-        // Configuración general del Panel (Tema Oscuro)
         this.setLayout(new GridBagLayout());
-        this.setBackground(Color.decode("#121212")); // Fondo negro principal
+        this.setBackground(Color.decode("#121212")); 
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 0, 10, 0); // Espaciado vertical
+        gbc.insets = new Insets(10, 0, 10, 0); 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
+        gbc.gridy = 0;
 
         // --- Título ---
-        JLabel lblTitulo = new JLabel("Crear Solicitud de Boleto");
+        JLabel lblTitulo = new JLabel("Nueva Solicitud / Reclamo");
         lblTitulo.setForeground(Color.WHITE);
         lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 24));
-        gbc.gridy = 0;
         this.add(lblTitulo, gbc);
 
-        // --- Campo: Concierto ---
+        // --- Campo: Tipo Solicitud ---
         gbc.gridy++;
-        this.add(crearLabel("Concierto"), gbc);
+        this.add(crearLabel("Tipo de Solicitud"), gbc);
 
         gbc.gridy++;
-        comboConcierto = new JComboBox<>(new String[]{"Seleccionar Concierto", "Festival Musical 2025", "Concierto de Rock"});
-        estilarInput(comboConcierto);
-        this.add(comboConcierto, gbc);
+        comboTipoSolicitud = new JComboBox<>(new String[]{"REEMBOLSO", "CAMBIO_ASIENTO", "ACLARACION", "FACTURACION"});
+        estilarInput(comboTipoSolicitud);
+        this.add(comboTipoSolicitud, gbc);
 
-        // --- Campo: Tipo de Boleto ---
+        // --- Campo: ID Boleto ---
         gbc.gridy++;
-        this.add(crearLabel("Tipo de Boleto"), gbc);
-
-        gbc.gridy++;
-        comboTipoBoleto = new JComboBox<>(new String[]{"Selecciona el Tipo de Boleto", "General", "VIP", "Platino"});
-        estilarInput(comboTipoBoleto);
-        this.add(comboTipoBoleto, gbc);
-
-        // --- Campo: Cantidad ---
-        gbc.gridy++;
-        this.add(crearLabel("Cantidad"), gbc);
+        this.add(crearLabel("ID Boleto Relacionado (Opcional)"), gbc);
 
         gbc.gridy++;
-        txtCantidad = new JTextField("Ingresa Cantidad");
-        estilarInput(txtCantidad);
-        this.add(txtCantidad, gbc);
+        txtIdBoleto = new JTextField();
+        estilarInput(txtIdBoleto);
+        this.add(txtIdBoleto, gbc);
 
-        // --- Campo: Nombre Contacto ---
+        // --- Campo: Descripción ---
         gbc.gridy++;
-        this.add(crearLabel("Contact Name"), gbc);
-
-        gbc.gridy++;
-        txtNombreContacto = new JTextField("Ingresa tu Nombre de Contacto");
-        estilarInput(txtNombreContacto);
-        this.add(txtNombreContacto, gbc);
-
-        // --- Campo: Email ---
-        gbc.gridy++;
-        this.add(crearLabel("Correo de Contacto"), gbc);
+        this.add(crearLabel("Descripción del Problema"), gbc);
 
         gbc.gridy++;
-        txtEmailContacto = new JTextField("Ingresa tu Correo de Contacto");
-        estilarInput(txtEmailContacto);
-        this.add(txtEmailContacto, gbc);
+        txtDescripcion = new JTextArea(5, 20);
+        txtDescripcion.setBackground(Color.decode("#1f1f23"));
+        txtDescripcion.setForeground(Color.WHITE);
+        txtDescripcion.setBorder(BorderFactory.createLineBorder(Color.decode("#333333")));
+        
+        JScrollPane scrollDesc = new JScrollPane(txtDescripcion);
+        scrollDesc.setPreferredSize(new Dimension(400, 100));
+        this.add(scrollDesc, gbc);
 
-        // --- Botón Submit ---
+        // --- Botones ---
         gbc.gridy++;
-        gbc.insets = new Insets(30, 0, 10, 0); // Más espacio antes del botón
-        btnSubmit = new JButton("Crear Solicitud");
-        btnSubmit.setBackground(Color.decode("#8b5cf6")); // Color morado del diseño
-        btnSubmit.setForeground(Color.WHITE);
-        btnSubmit.setFocusPainted(false);
-        btnSubmit.setFont(new Font("SansSerif", Font.BOLD, 14));
-        btnSubmit.setPreferredSize(new Dimension(200, 40));
-
-        // Alineación del botón a la derecha
+        gbc.insets = new Insets(30, 0, 10, 0); 
+        
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btnPanel.setOpaque(false);
+        
+        btnCancelar = new JButton("Cancelar");
+        estilarBoton(btnCancelar, Color.decode("#3f3f46"));
+        btnCancelar.addActionListener(e -> {
+            if(navegador != null) navegador.cambiarVista("SOLICITUDES");
+        });
+
+        btnSubmit = new JButton("Enviar Solicitud");
+        estilarBoton(btnSubmit, Color.decode("#8b5cf6"));
+        
+        // --- LOGICA DE GUARDADO ---
+        btnSubmit.addActionListener(e -> guardarSolicitud());
+
+        btnPanel.add(btnCancelar);
         btnPanel.add(btnSubmit);
 
         this.add(btnPanel, gbc);
     }
+    
+    private void guardarSolicitud() {
+        // 1. Crear DTO
+        SolicitudDTO nuevaSolicitud = new SolicitudDTO();
+        nuevaSolicitud.setIdUsuario("cliente"); // Simulado
+        nuevaSolicitud.setTipoSolicitud((String) comboTipoSolicitud.getSelectedItem());
+        nuevaSolicitud.setIdBoleto(txtIdBoleto.getText());
+        nuevaSolicitud.setDescripcion(txtDescripcion.getText());
+        nuevaSolicitud.setEstado("PENDIENTE");
+        nuevaSolicitud.setFechaSolicitud(new Date());
+        
+        // 2. Llamar Facade
+        boolean exito = solicitudesFacade.registrarSolicitud(nuevaSolicitud);
+        
+        // 3. Feedback y Navegación
+        if(exito) {
+            JOptionPane.showMessageDialog(this, "Solicitud enviada correctamente.");
+            if(navegador != null) navegador.cambiarVista("SOLICITUDES");
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al guardar. Revisa la descripción.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-    // Métodos auxiliares para estilo
+    // Estilos
     private JLabel crearLabel(String texto) {
         JLabel lbl = new JLabel(texto);
         lbl.setForeground(Color.LIGHT_GRAY);
@@ -114,20 +139,18 @@ public class FrmCrearSolicitud extends JPanel {
     }
 
     private void estilarInput(JComponent comp) {
-        comp.setBackground(Color.decode("#1f1f23")); // Fondo gris oscuro input
+        comp.setBackground(Color.decode("#1f1f23")); 
         comp.setForeground(Color.WHITE);
         comp.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         comp.setPreferredSize(new Dimension(400, 40));
     }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Crear Solicitud");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new FrmCrearSolicitud());
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
+    
+    private void estilarBoton(JButton btn, Color bg) {
+        btn.setBackground(bg);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        btn.setPreferredSize(new Dimension(150, 40));
     }
 }
